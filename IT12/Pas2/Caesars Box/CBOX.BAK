@@ -1,0 +1,52 @@
+program CaesarsBox(Input, Output);
+uses wincrt;
+
+type CharArray  = Array[1..16, 1..16] of Char;
+var UncodedMsg, CodedMsg  : String;
+    Code    : CharArray;
+    I, Col, Row : integer;
+    SqrLength : real;
+    PerfectSquare : integer;
+
+begin
+     CodedMsg := '';
+     {Get Input}
+     writeln('Write your message to be encoded/decoded');
+     readln(UncodedMsg);
+     For i := 1 to length(UnCodedMsg) do
+       begin
+         UnCodedMsg[i] := upcase(UncodedMsg[i]);
+         if (UnCodedMsg[i] >= 'A') and (UnCodedMsg[i] <= 'Z') then
+            CodedMsg := CodedMsg + UncodedMsg[i];
+       end;  {For}
+
+     {initialize array}
+     for Row := 1 to 16 do
+        for Col := 1 to 16 do
+            Code[Row,Col] := 'X';
+
+     SqrLength := sqrt(length(CodedMsg));
+     PerfectSquare := round(SqrLength);
+
+     i := 1;
+     For Row := 1 to PerfectSquare do
+       For Col := 1 to PerfectSquare do
+         begin
+            if i <= length(CodedMsg) then Code[Row,Col] := CodedMsg[i];
+            i := i + 1;
+         end;  {For Row}
+    {Test}
+     For Row := 1 to PerfectSquare do
+       begin
+         For Col := 1 to PerfectSquare do
+           write(Code[Row,Col];
+         writeln;
+       end;
+
+
+     readln;
+     donewincrt;
+end.
+
+{CaesarsBox}
+{Kaleb Haslam}

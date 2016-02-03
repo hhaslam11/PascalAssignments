@@ -1,0 +1,21 @@
+program MultTable2(Input, Output);
+uses wincrt;
+
+var I, X : integer;
+
+begin
+
+   writeln('     1     2     3     4     5');
+   writeln('     _________________________');
+
+   for I := 2 to 5 do
+      begin
+         writeln;
+         for X := 1 to 5 do
+            write((I * X):6);
+      end;
+
+end.
+
+{Nested Multiplication Table 2}
+{Kaleb Haslam}

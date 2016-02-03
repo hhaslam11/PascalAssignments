@@ -1,0 +1,12 @@
+program Factorials(Input, Output);
+uses wincrt;
+
+Function Factorial(Num : integer)
+   begin
+   end;
+
+begin
+
+end.
+{Factorials}
+{Kaleb Haslam}
