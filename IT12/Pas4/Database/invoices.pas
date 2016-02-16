@@ -2,7 +2,27 @@ program invoice(Input, Output, DiskFile);
 
 uses wincrt;
 
-type   
+type itemRecord = record
+     name    : String;
+     quanity : integer;
+     price   : integer;
+     desc    : String;
+
+var itemArray = array[1..9] of itemRecord;
+
+type invoice = record
+     number  : integer;
+     address : String;
+     name    : String;
+     date    : String;
+     item    : itemArray;
+     
+type invoiceFile  = file of invoice;
+     invoiceArray = array[1..99] of invoice;
+     
+var diskFile : invoiceFile;
+    invArr   : invoiceArray;
+     
 procedure newRecord;
    begin
    
@@ -23,7 +43,7 @@ procedure searchData;
             readln(menuChoice);
             
             case menuChoice of
-               1: {By invoic #}
+               1: {By invoice #}
                   {Get invoice number}
                   clrscr;
                   writeln('What invoice would you like to view: ');
@@ -49,7 +69,8 @@ procedure search(var i : integer);  {1 = date}
          begin
             {Have 3 if statments (Or a switch) to search through data depending on i.
             Probably need a for loop instead of while loop; add results that fit 
-            requirments to another array, then show menu (Use TF method for help menu)}
+            requirments to another array(of 5), have an index var to keep track of how many items, 
+            then show menu}
          end; {while loop}
    end;
 procedure delData;
@@ -77,7 +98,7 @@ procedure toArray(var diskFile : intFile);
          end;
 	end;
    
-procedure printArray(var ints : intArray);
+procedure printArray(var invoiceArray : invoiceArray, index : integer);
    var i, numOfDigs : integer;
    const BORDER_LENGTH : 30;
    begin
@@ -92,9 +113,9 @@ procedure printArray(var ints : intArray);
       {End top border}
       
       {Invoice #}
-      write('| Invoice Number: '{, INVOICE NUMBER});
+      write('| Invoice Number: ', invoiceArray[index].number);
       numOfDigs = 1;
-      if(numOfDigs >= 10) {Assuming there will be only be 1 to 99 records.}
+      if(invoiceArray[index].number >= 10) {Assuming there will be only be 1 to 99 records.}
          numOfDigs = 2;
       for i = (17 + numOfDigs) to (BORDER_LENGTH) do
          write(' ');
@@ -103,8 +124,8 @@ procedure printArray(var ints : intArray);
       {End Invoice #}
       
       {Customer name}
-      write('| Name: '{, Customer name: });
-      numOfDigs = {Customer Name Length};
+      write('| Name: ', invoiceArray[index].name});
+      numOfDigs = invoiceArray[index].name.length;
       for i = (7 + numOfDigs) to (BORDER_LENGTH) do
          write(' ');
       write('|');
@@ -112,8 +133,8 @@ procedure printArray(var ints : intArray);
       {End Customer name}
       
       {Date}
-      write('| Date: '{, Date});
-      numOfDigs = {Date length};
+      write('| Date: ', invoiceArray[index].date);
+      numOfDigs = invoiceArray[index].date.length;
       for i = (7 + numOfDigs) to (BORDER_LENGTH) do
          write(' ');
       write('|');
@@ -129,9 +150,21 @@ procedure printArray(var ints : intArray);
       {End Middle Border}
       
       {Print invoice item(s)}
-      {for loop needed}
+      var x : integer;
+      for x = 1 to invoiceArray[index].item.length do
+         begin
+            numOfDigs = 1;
+            if(invoiceArray[index].item[x].quanity >= 10)
+               numOfDigs = 2;
+            write('| ', invoiceArray[index].item[x].quanity);
+            for i = 1 to (11 - numOfDigs) do
+               write(' ');
+            write('| ');
+            
+         end;{for loop}
       {End invoice item(s)}
       
+      readln;
       {x := 0;
       for i := 0 to 99 do
          begin
@@ -140,7 +173,7 @@ procedure printArray(var ints : intArray);
                   writeln;
                   x := 0;
                end;
-               write(' ', ints[i]);
+               write(' ', ints[index]);
                x := x + 1;
          end;{For loop}}
    end;
