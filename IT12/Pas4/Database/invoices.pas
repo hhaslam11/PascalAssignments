@@ -62,11 +62,36 @@ procedure searchData;
          end;
    end;
 
-procedure search(var i : integer);  {1 = date}
-   var cont : boolean;              {2 = item purchased}
-   begin                            {3 = purchaser name}
-      while cont do
+procedure search(var i : integer);             {1 = date}
+   var cont : boolean;                         {2 = item purchased}
+       index, validItems : integer;            {3 = purchaser name}
+       valid : itemArray;
+       choiceStr : String;
+   begin              
+
+      {Get keyword (choiceStr)}
+      clrscr;
+      write('Enter your keyword you want to search for: ');
+      readln(choiceStr);
+      clrscr;
+      
+      for index = 0 to invArr.length do
          begin
+            if i = 1 do
+               begin
+                  if invArr[index].date = choiceStr do
+                     validItems := validItems + 1;
+               end;
+            if i = 2 do
+               begin
+                  {Loop through all items. Only increment validItems once}
+               end;
+            if i = 3 do
+               begin
+                  if invArr[index].name = choiceStr do
+                     validItems := validItems + 1;
+               end;
+               
             {Have 3 if statments (Or a switch) to search through data depending on i.
             Probably need a for loop instead of while loop; add results that fit 
             requirments to another array(of 5), have an index var to keep track of how many items, 
@@ -223,5 +248,18 @@ procedure menu;
 begin
    menu;
 end.
+
+
+{
+Things to remember:
+
+   When displaying only one invoice from menu, make sure the # is the same as the inputted one
+   
+
+
+
+
+}
+
 {Invoices}
 {Kaleb Haslam}
