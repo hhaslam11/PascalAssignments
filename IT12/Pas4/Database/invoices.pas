@@ -1,4 +1,4 @@
-program invoice(Input, Output, DiskFile);
+program dataBase(Input, Output, DiskFile);
 
 uses wincrt;
 
@@ -8,8 +8,9 @@ type itemRecord = record
      quanity : integer;
      price   : integer;
      desc    : String;
+end;
 
-var itemArray = array[1..9] of itemRecord;
+type itemArray = array[1..9] of itemRecord;
 
 type invoice = record
      number  : integer;
@@ -17,20 +18,20 @@ type invoice = record
      name    : String;
      date    : String;
      item    : itemArray;
-     
+end;
+
 type invoiceFile  = file of invoice;
      invoiceArray = array[1..MAX_RECORDS] of invoice;
      
 var diskFile : invoiceFile;
     invArr   : invoiceArray;
-     
+
 procedure newRecord;
-   var name, addr, date, desc, item, usrInput : String;
+   var name, addr, date, desc, item, usrInput : String;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             ;
        quanity, price, i, items : integer;
        itemArray : itemRecord;
        cont : boolean;
-       
-   begin
+   begin                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ;
       clrscr;
       writeln('New Record');
       write('Purchaser Name:');
