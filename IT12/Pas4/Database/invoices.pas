@@ -2,6 +2,7 @@ program invoice(Input, Output, DiskFile);
 
 uses wincrt;
 
+const MAX_RECORDS = 99;
 type itemRecord = record
      name    : String;
      quanity : integer;
@@ -18,14 +19,67 @@ type invoice = record
      item    : itemArray;
      
 type invoiceFile  = file of invoice;
-     invoiceArray = array[1..99] of invoice;
+     invoiceArray = array[1..MAX_RECORDS] of invoice;
      
 var diskFile : invoiceFile;
     invArr   : invoiceArray;
      
 procedure newRecord;
+   var name, addr, date, desc, item, usrInput : String;
+       quanity, price, i, items : integer;
+       itemArray : itemRecord;
+       cont : boolean;
+       
    begin
-   
+      clrscr;
+      writeln('New Record');
+      write('Purchaser Name:');
+      read
+      {For loop, way to exit}
+      for i := 1 to MAX_RECORDS do
+         begin
+            clrscr;
+            writeln('New Record');
+                  
+            write('Purchaser Name:');
+            readln(name);
+            clrscr
+         
+            write('Address: ');
+            readln(addr);
+            clrscr;
+         
+            write('Date: ');
+            readln(date);
+            clrscr;
+            
+            write('How many different items purchased: ');
+            readln(items);
+            clrscr;
+            for x := 1 to items do
+               begin
+                  write('Item name: ');
+                  readln(item);
+                  clrscr;
+                  
+                  write('Item description: ');
+                  readln(desc);
+                  clrscr;
+                  
+                  write('Quanity: ');
+                  readln(quanity);
+                  clrscr;
+               end; {for loop}
+            
+            {Put in array}
+            itemArray.name    := item;
+            itemArray.desc    := desc;
+            itemArray.quanity := quanity;
+            invArr[i].name    := name;
+            invArr[i].addr    := addr;
+            invArr[i].date    := date;
+            invArr[i].item    := itemArray;           
+         end;{for loop}
    end;
 
 procedure searchData;
@@ -51,10 +105,13 @@ procedure searchData;
                   printData(menuChoice);
                   end;
                2: {By date}
+                  search(1);
                   end;
                3: {By item purchased}
+                  search(2);
                   end;
                4: {By purchaser}
+                  search(3);
                   end;
                5:
                   cont := false;
@@ -65,8 +122,8 @@ procedure searchData;
 procedure search(var i : integer);             {1 = date}
    var cont : boolean;                         {2 = item purchased}
        index, validItems : integer;            {3 = purchaser name}
-       valid : itemArray;
-       choiceStr : String;
+       valid : itemArray;              
+       choiceStr : String;               
    begin              
 
       {Get keyword (choiceStr)}
@@ -99,14 +156,24 @@ procedure search(var i : integer);             {1 = date}
          end; {while loop}
    end;
 procedure delData;
-   var invoiceNumber : integer;
+   var invoiceNumber, i, i2 : integer;
+       tempArr : invArr;
    begin
       clrscr;
       writeln('What invoice # would you like to delete?');
       readln(invoiceNumber)
-      
-      {Do stuff to delete invoice & renumber inovices}
-      
+           
+      {i2 = index for second array}
+      for i = 1 to MAX_RECORDS do
+         begin
+            if i <> invoiceNumber do
+               begin
+                  tempArr[i2] := invArr[i];
+                  i2 := i2 + 1;
+               end;
+         end;
+      invArr := tempArr;
+         
       writeln('Record deleted');
       readln;
       clrscr;
@@ -255,10 +322,6 @@ Things to remember:
 
    When displaying only one invoice from menu, make sure the # is the same as the inputted one
    
-
-
-
-
 }
 
 {Invoices}
