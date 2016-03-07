@@ -5,7 +5,7 @@ uses wincrt;
 const MAX_RECORDS = 2;
       BORDER_LENGTH = 30;
       FILE_NAME = 'invoices.dat';
-      
+
 type itemRecord = record
      name    : String;
      quantity : integer;
@@ -23,36 +23,34 @@ type itemRecord = record
      item    : itemArray;
      end;
 
-     
      invoiceArray = array[1..MAX_RECORDS] of invoice;
-     invoiceFile = file of invoiceArray;
-      
+     invoiceFile = file of invoice;
+
 var diskFile : invoiceFile;
     invArr   : invoiceArray;
+    arrSize  : integer; {Don't need if arraysize is a constant}
 
-procedure writeFile(var diskFile : invoiceFile; invArr : invoiceArray);
+procedure writeFile(var diskFile : invoiceFile; var invArr : invoiceArray);
+   var i : integer;
    begin
       assign(diskFile, FILE_NAME);
       rewrite(diskFile);
-      write(diskFile, invArr);
+      For i := 1 to MAX_RECORDS do
+        write(diskFile, invArr[i]);
       close(diskFile);
    end;
-   
-procedure newRecord(var invArr : invoiceArray);
+
+procedure newRecord(var invArr : invoiceArray; var invFile : invoiceFile);
    var i, x, items : integer;
    begin
       clrscr;
-      writeln('New Record');
-      write('Purchaser Name:');
-      read;
-      {For loop, way to exit}
       for i := 1 to MAX_RECORDS do
          begin
             With InvArr[i] do
             clrscr;
             writeln('New Record');
 
-            write('Purchaser Name:');
+            write('Purchaser Name: ');
             readln(invArr[i].name);
             clrscr;
 
@@ -81,25 +79,25 @@ procedure newRecord(var invArr : invoiceArray);
                   write('quantity: ');
                   readln(quantity);
                   clrscr;
-               end;
-         end;
-         {writeFile(invoiceFile, invArr); }
+               end; {for x}
+         end; {for i}
+         writeFile(invFile, invArr);
    end;
 
 procedure search(var i : integer);       {1 = date}
    var cont : boolean;                   {2 = item purchased}
        index, validItems : integer;      {3 = purchaser name}
-       valid : itemArray;              
-       choiceStr : String;               
-   begin              
+       valid : itemArray;
+       choiceStr : String;
+   begin
 
       {Get keyword (choiceStr)}
       clrscr;
       write('Enter your keyword you want to search for: ');
       readln(choiceStr);
       clrscr;
-      
-      for index := 0 to {length(invArr)} high(invArr)-low(invArr)+1 do
+
+      for index := 0 to high(invArr) - low(invArr) + 1 do
          begin
             if i = 1 then
                begin
@@ -115,13 +113,14 @@ procedure search(var i : integer);       {1 = date}
                   if invArr[index].name = choiceStr then
                      validItems := validItems + 1;
                end;
-               
+
             {Have 3 if statments (Or a switch) to search through data depending on i.
-            Probably need a for loop instead of while loop; add results that fit 
-            requirments to another array(of 5), have an index var to keep track of how many items, 
+            Probably need a for loop instead of while loop; add results that fit
+            requirments to another array(of 5), have an index var to keep track of how many items,
             then show menu}
          end; {while loop}
    end;
+{
 procedure delData;
    var invoiceNumber, i, i2 : integer;
        tempArr : invoiceArray;
@@ -129,24 +128,24 @@ procedure delData;
       clrscr;
       writeln('What invoice # would you like to delete?');
       readln(invoiceNumber);
-           
-      {i2 = index for second array}                                            
-      for i := 1 to MAX_RECORDS do                                                             
-         begin                                                                                 
-            if i <> invoiceNumber then                                                         
-               begin                                                                           
-                  tempArr[i2] := invArr[i];                                                    
-                  i2 := i2 + 1;                                                                
-               end;                                                                            
-         end;                                                                                  
-      invArr := tempArr;                                                                       
 
-      writeln('Record deleted');                                                               
-      readln;                                                                                  
-      clrscr;                                                                                  
-   end;                                                                                        
+      {i2 = index for second array}{
+      for i := 1 to MAX_RECORDS do
+         begin
+            if i <> invoiceNumber then
+               begin
+                  tempArr[i2] := invArr[i];
+                  i2 := i2 + 1;
+               end;
+         end;
+      invArr := tempArr;
 
-procedure toArray(var diskFile : invoiceFile);
+      writeln('Record deleted');
+      readln;
+      clrscr;
+   end;
+}
+procedure toArray(var diskFile : invoiceFile; var invArr : invoiceArray);
         var i,x : integer;
 	begin
       i := 0;
@@ -157,13 +156,13 @@ procedure toArray(var diskFile : invoiceFile);
             i := i + 1;
          end;
 	end;
-   
+
 procedure printArray(var invoiceArray : invoiceArray; index : integer);
    var i,x, numOfDigs : integer;
 
    begin
       clrscr;
-      
+
       {Top border}
       write('+');
       for i := 1 to (BORDER_LENGTH + 2)do
@@ -171,7 +170,7 @@ procedure printArray(var invoiceArray : invoiceArray; index : integer);
       write('+');
       writeln;
       {End top border}
-      
+
       {Invoice #}
       write('| Invoice Number: ', invoiceArray[index].number);
       numOfDigs := 1;
@@ -182,7 +181,7 @@ procedure printArray(var invoiceArray : invoiceArray; index : integer);
       write('|');
       writeln;
       {End Invoice #}
-      
+
       {Customer name}
       write('| Name: ', invoiceArray[index].name);
       numOfDigs := length(invoiceArray[index].name);
@@ -191,7 +190,7 @@ procedure printArray(var invoiceArray : invoiceArray; index : integer);
       write('|');
       writeln;
       {End Customer name}
-      
+
       {Date}
       write('| Date: ', invoiceArray[index].date);
       numOfDigs := length(invoiceArray[index].date);
@@ -200,7 +199,7 @@ procedure printArray(var invoiceArray : invoiceArray; index : integer);
       write('|');
       writeln;
       {End date}
-      
+
       {Middle Border}
       write('+');
       for i := 1 to (BORDER_LENGTH + 2)do
@@ -208,10 +207,10 @@ procedure printArray(var invoiceArray : invoiceArray; index : integer);
       write('+');
       writeln;
       {End Middle Border}
-      
+
       {Print invoice item(s)}
 
-      for x := 1 to high(invoiceArray[index].item)-low(invoiceArray[index].item) + 1 do
+      for x := 1 to high(invoiceArray[index].item)-low(invoiceArray[index].item) + 1 do{use counter, pass to procedure}
          begin
             numOfDigs := 1;
             if(invoiceArray[index].item[x].quantity >= 10)then
@@ -220,7 +219,7 @@ procedure printArray(var invoiceArray : invoiceArray; index : integer);
             for i := 1 to (11 - numOfDigs) do
                write(' ');
             write('| ');
-            
+
          end;{for loop}
       {End invoice item(s)}
       readln;
@@ -238,9 +237,9 @@ procedure searchData(var invArr : invoiceArray);
             writeln('3) By item purchased');
             writeln('4) By purchaser');
             writeln('5) Back');
-            
+
             readln(menuChoice);
-            
+
             case menuChoice of
                1: {By invoice #}
                   begin
@@ -270,11 +269,12 @@ procedure searchData(var invArr : invoiceArray);
                   end;
          end;
    end;
- 
+
 procedure menu;
    var cont : boolean;
        menuChoice : integer;
    begin
+      cont := true;
       while cont do
          begin
             clrscr;
@@ -282,45 +282,43 @@ procedure menu;
             writeln('2) Print records (Single)');
             writeln('3) Print record (All)');
             writeln('4) Search records');
-            writeln('5) Delete records');
-            writeln('6) Quit');
-            
+            writeln('5) Quit');
+
             readln(menuChoice);
-            
+
             case menuChoice of
                1:
                begin
-                  newRecord(invArr);
-                  end;
+                  newRecord(invArr, diskFile);
+               end;
                2:
-                 begin
+               begin
                   {Get invoice number}
                   clrscr;
+                  toArray(diskFile, invArr);
                   writeln('What invoice would you like to view: ');
                   readln(menuChoice);
                   printArray(invArr, menuChoice);
-                  end;
+               end;
                3:
-                  begin
+               begin
+                  toArray(diskFile, invArr);
                   printArray(invArr, 0);
-                  end;
+               end;
                4:
                begin
+                  toArray(diskFile, invArr);
                   searchData(invArr);
-                  end;
+               end;
                5:
-               begin
-                  delData;
-                  end;
-               6:
                   cont := false;
                   end;
          end;
    end;
-   
-begin
+
+begin {main}
    menu;
-   endwincrt;
+   donewincrt;
 end.
 
 
@@ -328,7 +326,7 @@ end.
 Things to remember:
 
    When displaying only one invoice from menu, make sure the # is the same as the inputted one
-   
+
 }
 
 {Invoices}
