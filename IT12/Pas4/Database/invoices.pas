@@ -5,9 +5,10 @@ uses wincrt;
 const MAX_RECORDS = 2;
       BORDER_LENGTH = 30;
       FILE_NAME = 'invoices.dat';
+      PSTRATE = 0.05;
+      GSTRATE = 0.07;
 
 type itemRecord = record
-     name    : String;
      quantity : integer;
      price, extPrice : real;
      desc    : String;
@@ -16,11 +17,12 @@ type itemRecord = record
      itemArray = array[1..9] of itemRecord;
 
      invoice = record
-     number  : integer;
+     number, noitems  : integer;
      address : String;
      name    : String;
      date    : String;
      item    : itemArray;
+     subtotal, GST, PST, total : real;
      end;
 
      invoiceArray = array[1..MAX_RECORDS] of invoice;
@@ -45,11 +47,12 @@ procedure newRecord(var invArr : invoiceArray; var invFile : invoiceFile);
    begin
       clrscr;
       for i := 1 to MAX_RECORDS do
-         begin
-            With InvArr[i] do
+         With InvArr[i] do
+           begin
             clrscr;
             writeln('New Record');
 
+            number := i;
             write('Purchaser Name: ');
             readln(invArr[i].name);
             clrscr;
@@ -63,24 +66,31 @@ procedure newRecord(var invArr : invoiceArray; var invFile : invoiceFile);
             clrscr;
 
             write('How many different items purchased: ');
-            readln(items);
+            readln(noitems);
             clrscr;
-            for x := 1 to items do
+            SubTotal := 0;
+            for x := 1 to noitems do
                with invArr[i].item[x] do
                begin
-                  write('Item name: ');
-                  readln(name);
+                  write('Item Quantity: ');
+                  readln(quantity);
                   clrscr;
 
                   write('Item description: ');
                   readln(desc);
                   clrscr;
 
-                  write('quantity: ');
-                  readln(quantity);
+                  write('Unit Price: ');
+                  readln(price);
+
+                  ExtPrice := quantity * Price;
+                  invArr[i].SubTotal := invArr[i].SubTotal + ExtPrice;
                   clrscr;
                end; {for x}
-         end; {for i}
+               PST := SubTotal * PSTRATE;
+               GST := Subtotal * GSTRATE;
+               Total := SubTotal + PST + GST;
+         end; {With}
          writeFile(invFile, invArr);
    end;
 
@@ -120,108 +130,44 @@ procedure search(var i : integer);       {1 = date}
             then show menu}
          end; {while loop}
    end;
-{
-procedure delData;
-   var invoiceNumber, i, i2 : integer;
-       tempArr : invoiceArray;
-   begin
-      clrscr;
-      writeln('What invoice # would you like to delete?');
-      readln(invoiceNumber);
 
-      {i2 = index for second array}{
-      for i := 1 to MAX_RECORDS do
-         begin
-            if i <> invoiceNumber then
-               begin
-                  tempArr[i2] := invArr[i];
-                  i2 := i2 + 1;
-               end;
-         end;
-      invArr := tempArr;
-
-      writeln('Record deleted');
-      readln;
-      clrscr;
-   end;
-}
 procedure toArray(var diskFile : invoiceFile; var invArr : invoiceArray);
-        var i,x : integer;
-	begin
-      i := 0;
-      seek(diskFile, 0);
+   var i : integer;
+   begin
+      reset(DiskFile);
+      i := 1;
       while not EOF(diskFile) do
          begin
             read(diskFile, invArr[i]);
             i := i + 1;
          end;
-	end;
+     close(DiskFile);
+   end;
 
 procedure printArray(var invoiceArray : invoiceArray; index : integer);
    var i,x, numOfDigs : integer;
 
    begin
       clrscr;
-
-      {Top border}
-      write('+');
-      for i := 1 to (BORDER_LENGTH + 2)do
-         write('-');
-      write('+');
-      writeln;
-      {End top border}
-
-      {Invoice #}
-      write('| Invoice Number: ', invoiceArray[index].number);
-      numOfDigs := 1;
-      if(invoiceArray[index].number >= 10) then {Assuming there will be only be 1 to 99 records.}
-         numOfDigs := 2;
-      for i := (17 + numOfDigs) to (BORDER_LENGTH) do
-         write(' ');
-      write('|');
-      writeln;
-      {End Invoice #}
-
-      {Customer name}
-      write('| Name: ', invoiceArray[index].name);
-      numOfDigs := length(invoiceArray[index].name);
-      for i := (7 + numOfDigs) to (BORDER_LENGTH) do
-         write(' ');
-      write('|');
-      writeln;
-      {End Customer name}
-
-      {Date}
-      write('| Date: ', invoiceArray[index].date);
-      numOfDigs := length(invoiceArray[index].date);
-      for i := (7 + numOfDigs) to (BORDER_LENGTH) do
-         write(' ');
-      write('|');
-      writeln;
-      {End date}
-
-      {Middle Border}
-      write('+');
-      for i := 1 to (BORDER_LENGTH + 2)do
-         write('-');
-      write('+');
-      writeln;
-      {End Middle Border}
-
-      {Print invoice item(s)}
-
-      for x := 1 to high(invoiceArray[index].item)-low(invoiceArray[index].item) + 1 do{use counter, pass to procedure}
+      With invoiceArray[index] do
          begin
-            numOfDigs := 1;
-            if(invoiceArray[index].item[x].quantity >= 10)then
-               numOfDigs := 2;
-            write('| ', invoiceArray[index].item[x].quantity);
-            for i := 1 to (11 - numOfDigs) do
-               write(' ');
-            write('| ');
-
-         end;{for loop}
-      {End invoice item(s)}
+            writeln('Invoice Number:   ',   number);
+            writeln('Name:             ',   name);
+            writeln('Date:               ', date);
+            
+            {Print invoice item(s)}
+            writeln('Quantity', 'Description':20, 'Unit Price':10, 'Ext Price':10);
+            
+            for x := 1 to NoItems do 
+               With Item[x] do
+                  writeln(Quantity:2, Desc:20, '$', Price:10:2, '$', ExtPRice:10:2);
+                  
+            {End invoice item(s)}
+            writeln('Subtotal:    $', SubTotal:10:2);
+            writeln('PST:         $', PST:10:2);
+            writeln('GST:         $', GST:10:2);
+            writeln('Total:       $', Total:10:2);
+         end; {With InvoiceArray[index]}
       readln;
    end;
 
@@ -272,17 +218,16 @@ procedure searchData(var invArr : invoiceArray);
 
 procedure menu;
    var cont : boolean;
-       menuChoice : integer;
+       menuChoice, InvNo : integer;
    begin
       cont := true;
       while cont do
          begin
             clrscr;
             writeln('1) New record');
-            writeln('2) Print records (Single)');
-            writeln('3) Print record (All)');
-            writeln('4) Search records');
-            writeln('5) Quit');
+            writeln('2) Print record (All)');
+            writeln('3) Search records');
+            writeln('4) Quit');
 
             readln(menuChoice);
 
@@ -293,30 +238,23 @@ procedure menu;
                end;
                2:
                begin
-                  {Get invoice number}
-                  clrscr;
                   toArray(diskFile, invArr);
-                  writeln('What invoice would you like to view: ');
-                  readln(menuChoice);
-                  printArray(invArr, menuChoice);
+                  For invNo := 1 to MAX_RECORDS do
+                    printArray(invArr,InvNo);
                end;
                3:
                begin
                   toArray(diskFile, invArr);
-                  printArray(invArr, 0);
-               end;
-               4:
-               begin
-                  toArray(diskFile, invArr);
                   searchData(invArr);
                end;
-               5:
+               4:
                   cont := false;
                   end;
          end;
    end;
 
 begin {main}
+   assign(diskFile, FILE_NAME);
    menu;
    donewincrt;
 end.
