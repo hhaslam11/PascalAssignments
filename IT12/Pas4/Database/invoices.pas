@@ -113,10 +113,10 @@ procedure printArray(var invoiceArray : invoiceArray; index : integer);
                   writeln(Quantity:2, Desc:20, '$', Price:10:2, '$', ExtPRice:10:2);
                   
             {End invoice item(s)}
-            writeln('Subtotal:    $', SubTotal:10:2);
-            writeln('PST:         $', PST:10:2);
-            writeln('GST:         $', GST:10:2);
-            writeln('Total:       $', Total:10:2);
+            writeln('Subtotal:    ', '$':10, SubTotal:1:2);
+            writeln('PST:         ', '$':10, PST:1:2);
+            writeln('GST:         ', '$':10, GST:1:2);
+            writeln('Total:       ', '$':10, Total:1:2);
          end; {With InvoiceArray[index]}
       readln;
    end;
@@ -134,7 +134,7 @@ procedure search(var invArr : invoiceArray);
 
       for index := 1 to MAX_RECORDS do
          if (invArr[index].name = choiceStr) then
-            {printArray(invArr, index);}
+            printArray(invArr, index);
    end;
 
 procedure toArray(var diskFile : invoiceFile; var invArr : invoiceArray);
