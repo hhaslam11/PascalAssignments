@@ -63,7 +63,7 @@ procedure newRecord(var invArr : invoiceArray; var invFile : invoiceFile);
 
             write('Date: ');
             readln(invArr[i].date);
-            clrscr;
+            clrscr;ropbox.com/
 
             write('How many different items purchased: ');
             readln(noitems);
@@ -103,32 +103,13 @@ procedure search(var i : integer);       {1 = date}
 
       {Get keyword (choiceStr)}
       clrscr;
-      write('Enter your keyword you want to search for: ');
+      write('Enter your name you want to search for: ');
       readln(choiceStr);
       clrscr;
 
-      for index := 0 to high(invArr) - low(invArr) + 1 do
-         begin
-            if i = 1 then
-               begin
-                  if invArr[index].date = choiceStr then
-                     validItems := validItems + 1;
-               end;
-            if i = 2 then
-               begin
-                  {Loop through all items. Only increment validItems once}
-               end;
-            if i = 3 then
-               begin
-                  if invArr[index].name = choiceStr then
-                     validItems := validItems + 1;
-               end;
-
-            {Have 3 if statments (Or a switch) to search through data depending on i.
-            Probably need a for loop instead of while loop; add results that fit
-            requirments to another array(of 5), have an index var to keep track of how many items,
-            then show menu}
-         end; {while loop}
+      for index := 0 to MAX_RECORDS do
+         if (invArr[index].name = choiceStr) do
+            printArray(invArr, i)
    end;
 
 procedure toArray(var diskFile : invoiceFile; var invArr : invoiceArray);
@@ -179,10 +160,8 @@ procedure searchData(var invArr : invoiceArray);
          begin
             clrscr;
             writeln('1) By invoice #');
-            writeln('2) By date');
-            writeln('3) By item purchased');
-            writeln('4) By purchaser');
-            writeln('5) Back');
+            writeln('2) By purchaser');
+            writeln('3) Back');
 
             readln(menuChoice);
 
@@ -195,22 +174,11 @@ procedure searchData(var invArr : invoiceArray);
                      readln(menuChoice);
                      printArray(invArr, menuChoice);
                   end;
-               2: {By date}
+               2: {By purchaser}
                   begin
-                     menuChoice := 1;
-                     search(menuChoice);
+                     search;
                   end;
-               3: {By item purchased}
-                  begin
-                     menuChoice := 2;
-                     search(menuChoice);
-                  end;
-               4: {By purchaser}
-                  begin
-                     menuChoice := 3;
-                     search(menuChoice);
-                  end;
-               5:
+               3:
                   cont := false;
                   end;
          end;
