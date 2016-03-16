@@ -101,22 +101,25 @@ procedure printArray(var invoiceArray : invoiceArray; index : integer);
       clrscr;
       With invoiceArray[index] do
          begin
-            writeln('Invoice Number:   ',   number);
-            writeln('Name:             ',   name);
-            writeln('Date:               ', date);
-            
+            writeln('___________________________________________________________');
+            writeln('Invoice Number:   ', number);
+            writeln('Name:             ', name);
+            writeln('Date:             ', date);
+            writeln('___________________________________________________________');
             {Print invoice item(s)}
-            writeln('Quantity', 'Description':20, 'Unit Price':10, 'Ext Price':10);
-            
-            for x := 1 to NoItems do 
+            writeln('Quantity':8, 'Description':15, 'Unit Price':15, 'Ext Price':15);
+
+            for x := 1 to NoItems do
                With Item[x] do
-                  writeln(Quantity:2, Desc:20, '$', Price:10:2, '$', ExtPRice:10:2);
+                  writeln(Quantity:8, Desc:15, '$':8, Price:1:2, '$':10, ExtPRice:0:2);
+            writeln('___________________________________________________________');
                   
             {End invoice item(s)}
-            writeln('Subtotal:    ', '$':10, SubTotal:1:2);
-            writeln('PST:         ', '$':10, PST:1:2);
-            writeln('GST:         ', '$':10, GST:1:2);
-            writeln('Total:       ', '$':10, Total:1:2);
+            writeln('Subtotal:    ', '$':5, SubTotal:1:2);
+            writeln('PST:         ', '$':5, PST:1:2);
+            writeln('GST:         ', '$':5, GST:1:2);
+            writeln('Total:       ', '$':5, Total:1:2);
+            writeln('___________________________________________________________');
          end; {With InvoiceArray[index]}
       readln;
    end;
